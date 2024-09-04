@@ -43,7 +43,27 @@ describe('Список задач', () => {
 		expect(screenFirstRender).toMatchDiffSnapshot(screenSecondRender)
 	})
 
-	// показывает как выполненные, так и не выполненные задачи
-	// после повторного нажатия на кнопку фильтрации
-	it.todo('с выключенным фильтром')
+	it('C выключенным фильтром', async () => {
+		const onDelete = jest.fn()
+		const onToggle = jest.fn()
+
+		const items: Task[] = [
+			{ id: '325235', header: 'убраться дома', done: true },
+			{ id: '22377', header: 'приготовить ужин', done: false },
+			{ id: '42', header: 'выполнить дз', done: true }
+		]
+
+		render(<List items={items} onDelete={onDelete} onToggle={onToggle} />)
+
+		await userEvent.click(screen.getByText(/Невыполненные задачи/i))
+
+		expect(screen.queryByText('убраться дома')).toBeNull()
+		expect(screen.queryByText('выполнить дз')).toBeNull()
+
+		await userEvent.click(screen.getByText(/Все задачи/i))
+
+		expect(screen.getByText('убраться дома')).toBeInTheDocument()
+		expect(screen.getByText('приготовить ужин')).toBeInTheDocument()
+		expect(screen.getByText('выполнить дз')).toBeInTheDocument()
+	})
 })
