@@ -11,6 +11,9 @@ describe('Элемент списка задач', () => {
 		render(<Item {...task} onDelete={onDelete} onToggle={onToggle} />)
 		expect(screen.getByText(task.header)).toHaveTextContent(/^.{0,32}$/)
 	})
-	it.todo('название не должно быть пустым')
+	it('название не должно быть пустым', () => {
+		render(<Item {...task} onDelete={onDelete} onToggle={onToggle} />)
+		expect(screen.getByText(task.header)).not.toBeEmptyDOMElement() // проверяем на пустое название
+	})
 	it.todo('нельзя удалять невыполненные задачи')
 })
