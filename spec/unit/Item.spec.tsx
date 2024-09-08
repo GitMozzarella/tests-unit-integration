@@ -28,4 +28,15 @@ describe('Элемент списка задач', () => {
 
 		expect(onToggle).toHaveBeenCalledWith(task.id)
 	})
+
+	it('отображает задачу зачеркнутой, если она выполнена', () => {
+		const completedTask: Task = {
+			id: '43',
+			header: 'Убрать комнату',
+			done: true
+		}
+		render(<Item {...completedTask} onDelete={onDelete} onToggle={onToggle} />)
+		const label = screen.getByText(completedTask.header)
+		expect(label).toHaveStyle('text-decoration: line-through')
+	})
 })
