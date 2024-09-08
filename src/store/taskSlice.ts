@@ -18,17 +18,24 @@ export const taskListSlice = createSlice({
 	initialState,
 	reducers: {
 		addTask: (state, action: PayloadAction<Task['header']>) => {
-			state.list.push({
-				id: crypto.randomUUID(),
-				header: action.payload,
-				done: false
-			})
+			const uncompletedTasksCount = state.list.filter(task => !task.done).length
+			if (uncompletedTasksCount < 10) {
+				state.list.push({
+					id: crypto.randomUUID(),
+					header: action.payload,
+					done: false
+				})
+				state.notification = ''
+			} else {
+				state.notification = 'Невозможно добавить больше 10 невыполненных задач'
+			}
 		},
 		completeTask: (state, action: PayloadAction<Task['id']>) => {
 			const task = state.list.find(x => x.id === action.payload)
 
 			if (task) {
 				task.done = true
+				state.notification = `Задача "${task.header}" завершена`
 			}
 		},
 		toggleTask: (state, action: PayloadAction<Task['id']>) => {
@@ -75,3 +82,7 @@ export const uncompleteCount = (state: RootState) =>
 	state.taskList.list.filter(x => !x.done).length
 
 export const getNotification = (state: RootState) => state.taskList.notification
+
+// Новый селектор для получения только невыполненных задач
+export const uncompletedTasksSelector = (state: RootState) =>
+	state.taskList.list.filter(task => !task.done)
