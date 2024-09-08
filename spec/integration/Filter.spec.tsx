@@ -66,4 +66,41 @@ describe('Список задач', () => {
 		expect(screen.getByText('приготовить ужин')).toBeInTheDocument()
 		expect(screen.getByText('выполнить дз')).toBeInTheDocument()
 	})
+
+	it('Фильтрация с учетом частичного совпадения заголовка', async () => {
+		const onDelete = jest.fn()
+		const onToggle = jest.fn()
+
+		const items: Task[] = [
+			{ id: '1', header: 'покупка молока', done: false },
+			{ id: '2', header: 'приготовить ужин', done: false },
+			{ id: '3', header: 'выполнить домашку', done: true }
+		]
+
+		const { rerender } = render(
+			<List items={items} onDelete={onDelete} onToggle={onToggle} />
+		)
+
+		expect(screen.getByText('покупка молока')).toBeInTheDocument()
+		expect(screen.getByText('приготовить ужин')).toBeInTheDocument()
+		expect(screen.getByText('выполнить домашку')).toBeInTheDocument()
+
+		await userEvent.click(screen.getByText(/Невыполненные задачи/i))
+
+		expect(screen.getByText('покупка молока')).toBeInTheDocument()
+		expect(screen.getByText('приготовить ужин')).toBeInTheDocument()
+		expect(screen.queryByText('выполнить домашку')).toBeNull()
+
+		const updatedItems: Task[] = [
+			{ id: '4', header: 'молоко и хлеб', done: false },
+			{ id: '5', header: 'уточнить ужин', done: true }
+		]
+
+		rerender(
+			<List items={updatedItems} onDelete={onDelete} onToggle={onToggle} />
+		)
+
+		expect(screen.getByText('молоко и хлеб')).toBeInTheDocument()
+		expect(screen.queryByText('уточнить ужин')).toBeNull()
+	})
 })
