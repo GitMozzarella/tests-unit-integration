@@ -5,7 +5,7 @@ describe('Элемент списка задач', () => {
 	const onDelete = jest.fn()
 	const onToggle = jest.fn()
 
-	const task = { id: '42', header: 'Приготовить ужин', done: true }
+	const task = { id: '42', header: 'Приготовить ужин', done: false }
 
 	it('название не должно быть больше 32 символов', () => {
 		render(<Item {...task} onDelete={onDelete} onToggle={onToggle} />)
@@ -15,5 +15,9 @@ describe('Элемент списка задач', () => {
 		render(<Item {...task} onDelete={onDelete} onToggle={onToggle} />)
 		expect(screen.getByText(task.header)).not.toBeEmptyDOMElement() // проверяем на пустое название
 	})
-	it.todo('нельзя удалять невыполненные задачи')
+	it('нельзя удалять невыполненные задачи', () => {
+		render(<Item {...task} onDelete={onDelete} onToggle={onToggle} />)
+		const deleteButton = screen.getByRole('button')
+		expect(deleteButton).toBeDisabled() //кнопка удаления должна быть недоступна
+	})
 })
