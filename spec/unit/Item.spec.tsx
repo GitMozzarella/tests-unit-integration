@@ -20,4 +20,12 @@ describe('Элемент списка задач', () => {
 		const deleteButton = screen.getByRole('button')
 		expect(deleteButton).toBeDisabled() //кнопка удаления должна быть недоступна
 	})
+	it('при клике на задачу вызывается onToggle', () => {
+		render(<Item {...task} onDelete={onDelete} onToggle={onToggle} />)
+
+		const label = screen.getByLabelText(task.header)
+		label.click()
+
+		expect(onToggle).toHaveBeenCalledWith(task.id)
+	})
 })
